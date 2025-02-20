@@ -6,11 +6,11 @@ int roomDepth = 600;
 
 void setup() {
   size(800, 600, P3D);
-  cam = new Camera(0, 0, 1000);
+  cam = new Camera(width / 2, height / 2, 200);
 }
 
 void draw() {
-  background(200);
+  background(100, 100, 150);
   lights();
 
   cam.update();  // Update the camera
@@ -58,24 +58,3 @@ void drawRoom() {
   box(10, roomHeight, roomDepth);
   popMatrix();
 }
-
-void mouseDragged() {
-  cam.rotate(mouseX - pmouseX, mouseY - pmouseY);
-}
-
-void keyPressed() {
-  if (keyCode == LEFT) {
-    cam.move(-1, 0);
-  } else if (keyCode == RIGHT) {
-    cam.move(1, 0);
-  } else if (keyCode == UP) {
-    cam.move(0, -1);
-  } else if (keyCode == DOWN) {
-    cam.move(0, 1);
-  }
-}
-
-void mouseWheel(MouseEvent event) {
-  cam.zoom(event.getCount());
-}
-
