@@ -1,27 +1,59 @@
 Camera cam;
 Computer myDell;
+Chair chair;
 Table table;
 int gridSize = 200;  // Spacing between grid lines
 int gridCount = 3; // Number of lines per direction
 int roomWidth = 800;
 int roomHeight = 400;
 int roomDepth = 1200;
+PShader shader;
+PVector[] lightPos = { 
+  new PVector(0, -roomDepth/2, -roomHeight/2),
+  new PVector(-2000, 2000, 2000),
+  new PVector(-2000, 2000, -2000),
+  new PVector(2000, -2000, 2000)
+};
+
+PVector[] lightColor = {
+  new PVector(150, 150, 150),  // Dimmed white light
+  new PVector(150, 150, 150),  
+  new PVector(150, 150, 150),  
+  new PVector(150,150, 150),  
+};
+
 void setup() {
   size(800, 600, P3D);
+  shader = loadShader("LightShaderTexFrag.glsl", "LightShaderTexVert.glsl");
+
   cam = new Camera(0,0,0);
-  myDell = new Computer(0, 100, 0); // Position of the computer
-  table = new Table (0,0,0);
+  myDell = new Computer(0, 0, 0); // Position of the computer
+  chair = new Chair (0,0,0);
+  table = new Table (0,80,0);
 }
 
 void draw() {
-  background(255, 255, 255);
-  lights();
-
+  background(0, 0, 0);
+  shader(shader);
   cam.update();  // Update the camera
-  translate(0, 0, -roomDepth / 2);  // Center the room
-  //drawFull3DGrid();
-  //myDell.display();
-  //table.display();
+  for(int i=0; i<lightPos.length; i++) {
+    pointLight(lightColor[i].x, lightColor[i].y, lightColor[i].z, 
+               lightPos[i].x, lightPos[i].y, lightPos[i].z);
+  }   
+  //Light Source Test
+  fill(255);
+  for(int i=0; i<lightPos.length; i++) {
+      pushMatrix();
+          noStroke();
+          translate(lightPos[i].x, lightPos[i].y, lightPos[i].z);
+          box(10, 10, 10);
+      popMatrix();
+  }
+
+  drawFull3DGrid();
+  myDell.display();
+  //chair.display();
+  table.display();
   drawRoom();
   //Camera position
   println("Camera Position -> X: " + nf(cam.position.x, 1, 2) + 
