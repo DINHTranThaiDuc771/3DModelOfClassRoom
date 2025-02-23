@@ -1,6 +1,6 @@
 Camera cam;
 Computer myDell;
-
+Table table;
 int gridSize = 200;  // Spacing between grid lines
 int gridCount = 3; // Number of lines per direction
 int roomWidth = 800;
@@ -10,7 +10,7 @@ void setup() {
   size(800, 600, P3D);
   cam = new Camera(0,0,0);
   myDell = new Computer(0, 100, 0); // Position of the computer
-
+  table = new Table (0,0,0);
 }
 
 void draw() {
@@ -19,8 +19,9 @@ void draw() {
 
   cam.update();  // Update the camera
   translate(0, 0, -roomDepth / 2);  // Center the room
-  drawFull3DGrid();
-  myDell.display();
+  //drawFull3DGrid();
+  //myDell.display();
+  //table.display();
   drawRoom();
   //Camera position
   println("Camera Position -> X: " + nf(cam.position.x, 1, 2) + 

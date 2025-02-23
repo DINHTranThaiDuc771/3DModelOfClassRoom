@@ -1,6 +1,6 @@
 class Camera {
   PVector position;
-  float yaw = -45, pitch = 0;
+  float yaw = -PI/2, pitch = 0;
   // pitch : Rotate sur y axis
   // yaw : Rotate sur X axis
   // Dans le cas de notre utilisation, on n'utilise pas "roll"
