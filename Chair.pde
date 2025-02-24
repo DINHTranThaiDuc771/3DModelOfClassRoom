@@ -1,13 +1,13 @@
 class Chair {
   PVector position;
-  float seatWidth = 30;
-  float seatDepth = 30;
+  float seatWidth = 40;
+  float seatDepth = 50;
   float seatHeight = 5;
   float legThickness = 5;
   float legHeight = 30;
-  float backrestHeight = 40; 
+  float backrestHeight = 50; 
   float backrestThickness = 5; 
-
+  
   // Constructor accepting x, y, z for position
   Chair(float x, float y, float z) {
     position = new PVector(x, y, z);

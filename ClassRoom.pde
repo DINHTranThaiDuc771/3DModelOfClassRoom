@@ -1,13 +1,15 @@
 Camera cam;
-Computer myDell;
-Chair chair;
-Table table;
+
+WorkSpace workspace;
+LargeMonitor largeMonitor;
+Board board;
 int gridSize = 200;  // Spacing between grid lines
 int gridCount = 3; // Number of lines per direction
 int roomWidth = 800;
 int roomHeight = 400;
 int roomDepth = 1200;
 PShader shader;
+ArrayList<WorkSpace> workspaces = new ArrayList<WorkSpace>();
 PVector[] lightPos = { 
   new PVector(0, -roomDepth/2, -roomHeight/2),
   new PVector(-2000, 2000, 2000),
@@ -27,9 +29,21 @@ void setup() {
   shader = loadShader("LightShaderTexFrag.glsl", "LightShaderTexVert.glsl");
 
   cam = new Camera(0,0,0);
-  myDell = new Computer(0, 0, 0); // Position of the computer
-  chair = new Chair (0,0,0);
-  table = new Table (0,80,0);
+  float yWorkSpace = roomHeight/2-35; //35 is tableHeight/2
+  float xStart = -135;
+  float zStart = -135;
+  workspace = new WorkSpace(xStart,yWorkSpace,zStart);
+  largeMonitor = new LargeMonitor(-roomWidth/2+400,roomHeight/2-5,-roomDepth/2+50);
+  board = new Board (0,0,-roomDepth/2+5);
+  float tableWidth = workspace.table.tableWidth;
+  float spaceBetweenLines = workspace.table.tableDepth+50;
+  for (int i = 0; i<4;i++) { 
+    for (int j = 0; j <4 ;j++) {
+        WorkSpace w =  new WorkSpace(xStart+i*tableWidth+5,yWorkSpace,zStart+j*spaceBetweenLines);
+        workspaces.add(w);
+    }
+
+  }
 }
 
 void draw() {
@@ -51,14 +65,20 @@ void draw() {
   }
 
   drawFull3DGrid();
-  myDell.display();
-  //chair.display();
-  table.display();
+  for (WorkSpace w : workspaces) {
+    w.display();
+  }
+  pushMatrix();
+    rotateY(PI/8);
+    largeMonitor.display();
+  popMatrix();
+  board.display();
   drawRoom();
   //Camera position
+  /*
   println("Camera Position -> X: " + nf(cam.position.x, 1, 2) + 
           " | Y: " + nf(cam.position.y, 1, 2) + 
-          " | Z: " + nf(cam.position.z, 1, 2));
+          " | Z: " + nf(cam.position.z, 1, 2));*/
 }
 
 void drawRoom() {
