@@ -10,12 +10,12 @@ class LargeMonitor {
   float baseDepth = 30;
   float baseThickness = 5;
   
-  color screenColor = color(0);  // Black screen
-  color standColor = color(50);  // Dark gray stand
-  color baseColor = color(100);  // Lighter gray base
-
+  PImage black,darkGray,lightGray;
   LargeMonitor(float x, float y, float z) {
     position = new PVector(x, y, z);
+    lightGray = loadImage("lightGray.png");
+    black = loadImage("black.jpg");
+    darkGray = loadImage("darkgray.png");
   }
 
   void display() {
@@ -23,24 +23,61 @@ class LargeMonitor {
     translate(position.x, position.y, position.z);
 
     // Draw screen
-    fill(screenColor);
-    drawBox(0, -standHeight - screenHeight / 2, 0, screenWidth, screenHeight, screenDepth);
+    drawBox(0, -standHeight - screenHeight / 2, 0, screenWidth, screenHeight, screenDepth,black);
 
     // Draw stand pole
-    fill(standColor);
-    drawBox(0, -standHeight / 2, 0, standWidth, standHeight, standWidth);
+    drawBox(0, -standHeight / 2, 0, standWidth, standHeight, standWidth,darkGray);
 
     // Draw stand base
-    fill(baseColor);
-    drawBox(0, baseThickness / 2, 0, baseWidth, baseThickness, baseDepth);
+    drawBox(0, baseThickness / 2, 0, baseWidth, baseThickness, baseDepth,lightGray);
 
     popMatrix();
   }
 
-  void drawBox(float x, float y, float z, float w, float h, float d) {
+  void drawBox(float x, float y, float z, float w, float h, float d, PImage texture) {
     pushMatrix();
     translate(x, y, z);
-    box(w, h, d);
+    textureMode(NORMAL);
+    beginShape(QUADS);
+    texture(texture);
+  
+    // Top face
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, -h / 2, -d / 2, 1, 0);
+    vertex(w / 2, -h / 2, d / 2, 1, 1);
+    vertex(-w / 2, -h / 2, d / 2, 0, 1);
+  
+    // Bottom face
+    vertex(-w / 2, h / 2, -d / 2, 0, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, h / 2, d / 2, 0, 1);
+  
+    // Front face
+    vertex(-w / 2, -h / 2, d / 2, 0, 0);
+    vertex(w / 2, -h / 2, d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, h / 2, d / 2, 0, 1);
+  
+    // Back face
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, -h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 1);
+    vertex(-w / 2, h / 2, -d / 2, 0, 1);
+  
+    // Left face
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(-w / 2, h / 2, -d / 2, 1, 0);
+    vertex(-w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, -h / 2, d / 2, 0, 1);
+  
+    // Right face
+    vertex(w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(w / 2, -h / 2, d / 2, 0, 1);
+  
+    endShape(CLOSE);
     popMatrix();
   }
 }

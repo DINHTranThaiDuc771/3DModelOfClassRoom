@@ -10,6 +10,7 @@ int roomHeight = 400;
 int roomDepth = 1200;
 PShader shader;
 ArrayList<WorkSpace> workspaces = new ArrayList<WorkSpace>();
+PImage wallTexture,floorTexture,cellingTexture ;
 PVector[] lightPos = { 
   new PVector(0, -roomDepth/2, -roomHeight/2),
   new PVector(-2000, 2000, 2000),
@@ -27,7 +28,11 @@ PVector[] lightColor = {
 void setup() {
   size(800, 600, P3D);
   shader = loadShader("LightShaderTexFrag.glsl", "LightShaderTexVert.glsl");
-
+  //Load textures for classroom
+  wallTexture = loadImage("wallTexture.png");
+  floorTexture = loadImage("floorTexture.png");
+  cellingTexture = loadImage("cellingTexture.jpg");
+  //Load objects instances
   cam = new Camera(0,0,0);
   float yWorkSpace = roomHeight/2-35; //35 is tableHeight/2
   float xStart = -135;
@@ -73,7 +78,7 @@ void draw() {
     largeMonitor.display();
   popMatrix();
   board.display();
-  drawRoom();
+  drawRoom(wallTexture,floorTexture,cellingTexture);
   //Camera position
   /*
   println("Camera Position -> X: " + nf(cam.position.x, 1, 2) + 
@@ -81,82 +86,83 @@ void draw() {
           " | Z: " + nf(cam.position.z, 1, 2));*/
 }
 
-void drawRoom() {
+void drawRoom(PImage wallTexture, PImage floorTexture, PImage ceilingTexture) {
   stroke(0);
-  fill(150, 200, 250);  // Light blue walls
-  
+  textureMode(NORMAL);  // Use NORMALIZED texture coordinates (0 to 1)
+
   // Floor
   pushMatrix();
-  fill(180);  // Gray floor
   translate(0, roomHeight / 2, 0);
   beginShape();
-  vertex(-roomWidth / 2, 0, -roomDepth / 2);
-  vertex(roomWidth / 2, 0, -roomDepth / 2);
-  vertex(roomWidth / 2, 0, roomDepth / 2);
-  vertex(-roomWidth / 2, 0, roomDepth / 2);
+  texture(floorTexture);
+  vertex(-roomWidth / 2, 0, -roomDepth / 2, 0, 0);
+  vertex(roomWidth / 2, 0, -roomDepth / 2, 1, 0);
+  vertex(roomWidth / 2, 0, roomDepth / 2, 1, 1);
+  vertex(-roomWidth / 2, 0, roomDepth / 2, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
   // Ceiling
   pushMatrix();
-  fill(220);  // Light gray ceiling
   translate(0, -roomHeight / 2, 0);
   beginShape();
-  vertex(-roomWidth / 2, 0, -roomDepth / 2);
-  vertex(roomWidth / 2, 0, -roomDepth / 2);
-  vertex(roomWidth / 2, 0, roomDepth / 2);
-  vertex(-roomWidth / 2, 0, roomDepth / 2);
+  texture(ceilingTexture);
+  vertex(-roomWidth / 2, 0, -roomDepth / 2, 0, 0);
+  vertex(roomWidth / 2, 0, -roomDepth / 2, 1, 0);
+  vertex(roomWidth / 2, 0, roomDepth / 2, 1, 1);
+  vertex(-roomWidth / 2, 0, roomDepth / 2, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Back wall
+  // Back Wall
   pushMatrix();
-  fill(150, 200, 250);
   translate(0, 0, roomDepth / 2);
   beginShape();
-  vertex(-roomWidth / 2, -roomHeight / 2, 0);
-  vertex(roomWidth / 2, -roomHeight / 2, 0);
-  vertex(roomWidth / 2, roomHeight / 2, 0);
-  vertex(-roomWidth / 2, roomHeight / 2, 0);
+  texture(wallTexture);
+  vertex(-roomWidth / 2, -roomHeight / 2, 0, 0, 0);
+  vertex(roomWidth / 2, -roomHeight / 2, 0, 1, 0);
+  vertex(roomWidth / 2, roomHeight / 2, 0, 1, 1);
+  vertex(-roomWidth / 2, roomHeight / 2, 0, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Left wall
+  // Left Wall
   pushMatrix();
-  fill(150, 200, 250);
   translate(-roomWidth / 2, 0, 0);
   beginShape();
-  vertex(0, -roomHeight / 2, -roomDepth / 2);
-  vertex(0, roomHeight / 2, -roomDepth / 2);
-  vertex(0, roomHeight / 2, roomDepth / 2);
-  vertex(0, -roomHeight / 2, roomDepth / 2);
+  texture(wallTexture);
+  vertex(0, -roomHeight / 2, -roomDepth / 2, 0, 0);
+  vertex(0, roomHeight / 2, -roomDepth / 2, 1, 0);
+  vertex(0, roomHeight / 2, roomDepth / 2, 1, 1);
+  vertex(0, -roomHeight / 2, roomDepth / 2, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Right wall
+  // Right Wall
   pushMatrix();
-  fill(150, 200, 250);
   translate(roomWidth / 2, 0, 0);
   beginShape();
-  vertex(0, -roomHeight / 2, -roomDepth / 2);
-  vertex(0, roomHeight / 2, -roomDepth / 2);
-  vertex(0, roomHeight / 2, roomDepth / 2);
-  vertex(0, -roomHeight / 2, roomDepth / 2);
+  texture(wallTexture);
+  vertex(0, -roomHeight / 2, -roomDepth / 2, 0, 0);
+  vertex(0, roomHeight / 2, -roomDepth / 2, 1, 0);
+  vertex(0, roomHeight / 2, roomDepth / 2, 1, 1);
+  vertex(0, -roomHeight / 2, roomDepth / 2, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
   // Front Wall
   pushMatrix();
-  fill(150, 200, 250);
   translate(0, 0, -roomDepth / 2);
   beginShape();
-  vertex(-roomWidth / 2, -roomHeight / 2, 0);
-  vertex(roomWidth / 2, -roomHeight / 2, 0);
-  vertex(roomWidth / 2, roomHeight / 2, 0);
-  vertex(-roomWidth / 2, roomHeight / 2, 0);
+  texture(wallTexture);
+  vertex(-roomWidth / 2, -roomHeight / 2, 0, 0, 0);
+  vertex(roomWidth / 2, -roomHeight / 2, 0, 1, 0);
+  vertex(roomWidth / 2, roomHeight / 2, 0, 1, 1);
+  vertex(-roomWidth / 2, roomHeight / 2, 0, 0, 1);
   endShape(CLOSE);
   popMatrix();
 }
+
 
 void drawFull3DGrid() {
   strokeWeight(1);

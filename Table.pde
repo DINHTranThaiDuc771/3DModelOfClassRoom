@@ -9,8 +9,8 @@ class Table {
   float tableFrontThickNess = 20;
   color gray = color(150);
   color brown = color(139, 69, 19);
-  PImage textureTable;
-
+  PImage textureTable,metalTexture;
+  PImage lightBrown;
   Table(float x, float y, float z) {
     position = new PVector(x, y, z);
     LoadTextureImages();
@@ -18,6 +18,8 @@ class Table {
 
   void LoadTextureImages() {
     textureTable = loadImage("tableTex.jpg");
+    metalTexture = loadImage("metalTexture.png");
+    lightBrown = loadImage("lightBrown.jpg");
   }
 
   void display() {
@@ -32,113 +34,115 @@ class Table {
     // Draw Table front
     fill(gray);
     translate(0, 0, tableFrontThickNess / 2);
-    drawBox(0, 0, -tableDepth / 2, tableWidth, tableHeight - tableTopHeight, tableFrontThickNess);
+    drawBox(0, 0, -tableDepth / 2, tableWidth, tableHeight - tableTopHeight, tableFrontThickNess,metalTexture);
     popMatrix();
 
     // Draw 4 "legs" of table front
     float legX = tableWidth / 2 - legThickness / 2;
     float legY = -tableHeight / 2 + legThickness / 2 + tableTopHeight / 2;
     float legZ = -tableDepth / 2 + tableFrontThickNess + legDepth / 2;
-    drawBox(legX, legY, legZ, legThickness, legThickness, legDepth);
-    drawBox(-legX, -legY, legZ, legThickness, legThickness, legDepth); // Symmetry by plane XY
-    drawBox(legX, -legY, -legZ, legThickness, legThickness, legDepth); // Symmetry by plane YZ
-    drawBox(-legX, legY, -legZ, legThickness, legThickness, legDepth); // Symmetry by plane XZ
+    drawBox(legX, legY, legZ, legThickness, legThickness, legDepth,metalTexture);
+    drawBox(-legX, -legY, legZ, legThickness, legThickness, legDepth,metalTexture); // Symmetry by plane XY
+    drawBox(legX, -legY, -legZ, legThickness, legThickness, legDepth,metalTexture); // Symmetry by plane YZ
+    drawBox(-legX, legY, -legZ, legThickness, legThickness, legDepth,metalTexture); // Symmetry by plane XZ
 
     popMatrix();
   }
 
   // Method to draw the table top with texture applied
   void drawTableTop(float x, float y, float z, float w, float h, float d) {
+    drawBoxWithTextureOnTop(x,y,z,w,h,d,textureTable,lightBrown);
+
+  }
+  void drawBoxWithTextureOnTop(float x,float y, float z, float w, float h, float d,PImage textureTop,PImage otherTexture){
     pushMatrix();
     translate(x, y, z);
-    textureMode(NORMAL); // Set texture mode to NORMAL
-
     beginShape(QUADS);
-    texture(textureTable);
-
-    // Top face (where the texture will be applied)
-    vertex(-w / 2, -h / 2, -d / 2, 0, 0);  // Vertex coordinates with texture mapping (x, y, z, u, v)
-    vertex(w / 2, -h / 2, -d / 2, 1, 0);
-    vertex(w / 2, -h / 2, d / 2, 1, 1);
-    vertex(-w / 2, -h / 2, d / 2, 0, 1);
-    drawBoxWithoutTop(w,h,d);
+      texture(textureTop);
+      // Top face (where the texture will be applied)
+      vertex(-w / 2, -h / 2, -d / 2, 0, 0);  // Vertex coordinates with texture mapping (x, y, z, u, v)
+      vertex(w / 2, -h / 2, -d / 2, 1, 0);
+      vertex(w / 2, -h / 2, d / 2, 1, 1);
+      vertex(-w / 2, -h / 2, d / 2, 0, 1);
+    endShape(CLOSE);
+    beginShape(QUADS);
+      texture(otherTexture);
+      // Bottom face
+      vertex(-w / 2, h / 2, -d / 2, 0, 0);
+      vertex(w / 2, h / 2, -d / 2, 1, 0);
+      vertex(w / 2, h / 2, d / 2, 1, 1);
+      vertex(-w / 2, h / 2, d / 2, 0, 1);
+    
+      // Front face
+      vertex(-w / 2, -h / 2, d / 2, 0, 0);
+      vertex(w / 2, -h / 2, d / 2, 1, 0);
+      vertex(w / 2, h / 2, d / 2, 1, 1);
+      vertex(-w / 2, h / 2, d / 2, 0, 1);
+    
+      // Back face
+      vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+      vertex(w / 2, -h / 2, -d / 2, 1, 0);
+      vertex(w / 2, h / 2, -d / 2, 1, 1);
+      vertex(-w / 2, h / 2, -d / 2, 0, 1);
+    
+      // Left face
+      vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+      vertex(-w / 2, h / 2, -d / 2, 1, 0);
+      vertex(-w / 2, h / 2, d / 2, 1, 1);
+      vertex(-w / 2, -h / 2, d / 2, 0, 1);
+    
+      // Right face
+      vertex(w / 2, -h / 2, -d / 2, 0, 0);
+      vertex(w / 2, h / 2, -d / 2, 1, 0);
+      vertex(w / 2, h / 2, d / 2, 1, 1);
+      vertex(w / 2, -h / 2, d / 2, 0, 1);
     endShape(CLOSE);
     popMatrix();
   }
-  void drawBoxWithoutTop (float w, float h, float d) 
-  {
-    // Bottom face
-    vertex(-w / 2, h / 2, -d / 2);
-    vertex(w / 2, h / 2, -d / 2);
-    vertex(w / 2, h / 2, d / 2);
-    vertex(-w / 2, h / 2, d / 2);
-
-    // Front face
-    vertex(-w / 2, -h / 2, d / 2);
-    vertex(w / 2, -h / 2, d / 2);
-    vertex(w / 2, h / 2, d / 2);
-    vertex(-w / 2, h / 2, d / 2);
-
-    // Back face
-    vertex(-w / 2, -h / 2, -d / 2);
-    vertex(w / 2, -h / 2, -d / 2);
-    vertex(w / 2, h / 2, -d / 2);
-    vertex(-w / 2, h / 2, -d / 2);
-
-    // Left face
-    vertex(-w / 2, -h / 2, -d / 2);
-    vertex(-w / 2, h / 2, -d / 2);
-    vertex(-w / 2, h / 2, d / 2);
-    vertex(-w / 2, -h / 2, d / 2);
-
-    // Right face
-    vertex(w / 2, -h / 2, -d / 2);
-    vertex(w / 2, h / 2, -d / 2);
-    vertex(w / 2, h / 2, d / 2);
-    vertex(w / 2, -h / 2, d / 2);
-  }
   // Draw basic box without texture
-  void drawBox(float x, float y, float z, float w, float h, float d) {
+  void drawBox(float x, float y, float z, float w, float h, float d, PImage texture) {
     pushMatrix();
     translate(x, y, z);
+    textureMode(NORMAL);
     beginShape(QUADS);
-
+    texture(texture);
+  
     // Top face
-    vertex(-w / 2, -h / 2, -d / 2);
-    vertex(w / 2, -h / 2, -d / 2);
-    vertex(w / 2, -h / 2, d / 2);
-    vertex(-w / 2, -h / 2, d / 2);
-
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, -h / 2, -d / 2, 1, 0);
+    vertex(w / 2, -h / 2, d / 2, 1, 1);
+    vertex(-w / 2, -h / 2, d / 2, 0, 1);
+  
     // Bottom face
-    vertex(-w / 2, h / 2, -d / 2);
-    vertex(w / 2, h / 2, -d / 2);
-    vertex(w / 2, h / 2, d / 2);
-    vertex(-w / 2, h / 2, d / 2);
-
+    vertex(-w / 2, h / 2, -d / 2, 0, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, h / 2, d / 2, 0, 1);
+  
     // Front face
-    vertex(-w / 2, -h / 2, d / 2);
-    vertex(w / 2, -h / 2, d / 2);
-    vertex(w / 2, h / 2, d / 2);
-    vertex(-w / 2, h / 2, d / 2);
-
+    vertex(-w / 2, -h / 2, d / 2, 0, 0);
+    vertex(w / 2, -h / 2, d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, h / 2, d / 2, 0, 1);
+  
     // Back face
-    vertex(-w / 2, -h / 2, -d / 2);
-    vertex(w / 2, -h / 2, -d / 2);
-    vertex(w / 2, h / 2, -d / 2);
-    vertex(-w / 2, h / 2, -d / 2);
-
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, -h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 1);
+    vertex(-w / 2, h / 2, -d / 2, 0, 1);
+  
     // Left face
-    vertex(-w / 2, -h / 2, -d / 2);
-    vertex(-w / 2, h / 2, -d / 2);
-    vertex(-w / 2, h / 2, d / 2);
-    vertex(-w / 2, -h / 2, d / 2);
-
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(-w / 2, h / 2, -d / 2, 1, 0);
+    vertex(-w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, -h / 2, d / 2, 0, 1);
+  
     // Right face
-    vertex(w / 2, -h / 2, -d / 2);
-    vertex(w / 2, h / 2, -d / 2);
-    vertex(w / 2, h / 2, d / 2);
-    vertex(w / 2, -h / 2, d / 2);
-
+    vertex(w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(w / 2, -h / 2, d / 2, 0, 1);
+  
     endShape(CLOSE);
     popMatrix();
   }
