@@ -32,7 +32,6 @@ class Table {
 
     pushMatrix();
     // Draw Table front
-    fill(gray);
     translate(0, 0, tableFrontThickNess / 2);
     drawBox(0, 0, -tableDepth / 2, tableWidth, tableHeight - tableTopHeight, tableFrontThickNess,metalTexture);
     popMatrix();
@@ -99,7 +98,7 @@ class Table {
     endShape(CLOSE);
     popMatrix();
   }
-  // Draw basic box without texture
+  // Draw basic box with texture
   void drawBox(float x, float y, float z, float w, float h, float d, PImage texture) {
     pushMatrix();
     translate(x, y, z);

@@ -3,6 +3,7 @@ Camera cam;
 WorkSpace workspace;
 LargeMonitor largeMonitor;
 Board board;
+boolean show3DGrid = false;
 int gridSize = 200;  // Spacing between grid lines
 int gridCount = 3; // Number of lines per direction
 int roomWidth = 800;
@@ -10,19 +11,19 @@ int roomHeight = 400;
 int roomDepth = 1200;
 PShader shader;
 ArrayList<WorkSpace> workspaces = new ArrayList<WorkSpace>();
-PImage wallTexture,floorTexture,cellingTexture ;
+PImage wallTexture,floorTexture,cellingTexture,bulbTexture ;
 PVector[] lightPos = { 
-  new PVector(0, -roomDepth/2, -roomHeight/2),
-  new PVector(-2000, 2000, 2000),
-  new PVector(-2000, 2000, -2000),
-  new PVector(2000, -2000, 2000)
+  new PVector(0, -roomHeight/2+5, -roomDepth/2+25),
+  new PVector(0, -roomHeight/2+5, 0),
+  new PVector(0, -roomHeight/2+5, roomDepth/2-25),
+  new PVector(1500, 1500,1500),
 };
 
 PVector[] lightColor = {
-  new PVector(150, 150, 150),  // Dimmed white light
-  new PVector(150, 150, 150),  
-  new PVector(150, 150, 150),  
-  new PVector(150,150, 150),  
+  new PVector(155, 155, 155),  // Dimmed white light
+  new PVector(155, 155, 155),  
+  new PVector(100, 100, 100),
+  new PVector(100, 100, 100)
 };
 
 void setup() {
@@ -32,6 +33,7 @@ void setup() {
   wallTexture = loadImage("wallTexture.png");
   floorTexture = loadImage("floorTexture.png");
   cellingTexture = loadImage("cellingTexture.jpg");
+  bulbTexture = loadImage("white.png");
   //Load objects instances
   cam = new Camera(0,0,0);
   float yWorkSpace = roomHeight/2-35; //35 is tableHeight/2
@@ -47,29 +49,21 @@ void setup() {
         WorkSpace w =  new WorkSpace(xStart+i*tableWidth+5,yWorkSpace,zStart+j*spaceBetweenLines);
         workspaces.add(w);
     }
-
+  
   }
 }
 
 void draw() {
-  background(0, 0, 0);
+  background(100, 100, 255);
   shader(shader);
   cam.update();  // Update the camera
   for(int i=0; i<lightPos.length; i++) {
-    pointLight(lightColor[i].x, lightColor[i].y, lightColor[i].z, 
-               lightPos[i].x, lightPos[i].y, lightPos[i].z);
-  }   
-  //Light Source Test
-  fill(255);
-  for(int i=0; i<lightPos.length; i++) {
-      pushMatrix();
-          noStroke();
-          translate(lightPos[i].x, lightPos[i].y, lightPos[i].z);
-          box(10, 10, 10);
-      popMatrix();
+    pointLight(lightColor[i].x, lightColor[i].y, lightColor[i].z,lightPos[i].x, lightPos[i].y, lightPos[i].z);
+    drawLightBulb(lightPos[i].x, lightPos[i].y, lightPos[i].z,10,10,50,bulbTexture);
+           
   }
 
-  drawFull3DGrid();
+  if (show3DGrid) drawFull3DGrid();
   for (WorkSpace w : workspaces) {
     w.display();
   }
@@ -79,78 +73,71 @@ void draw() {
   popMatrix();
   board.display();
   drawRoom(wallTexture,floorTexture,cellingTexture);
-  //Camera position
-  /*
-  println("Camera Position -> X: " + nf(cam.position.x, 1, 2) + 
-          " | Y: " + nf(cam.position.y, 1, 2) + 
-          " | Z: " + nf(cam.position.z, 1, 2));*/
 }
-
+void mousePressed(){
+  show3DGrid = !show3DGrid;
+}
 void drawRoom(PImage wallTexture, PImage floorTexture, PImage ceilingTexture) {
   stroke(0);
   textureMode(NORMAL);  // Use NORMALIZED texture coordinates (0 to 1)
 
   // Floor
   pushMatrix();
-  translate(0, roomHeight / 2, 0);
   beginShape();
   texture(floorTexture);
-  vertex(-roomWidth / 2, 0, -roomDepth / 2, 0, 0);
-  vertex(roomWidth / 2, 0, -roomDepth / 2, 1, 0);
-  vertex(roomWidth / 2, 0, roomDepth / 2, 1, 1);
-  vertex(-roomWidth / 2, 0, roomDepth / 2, 0, 1);
+  vertex(-roomWidth / 2, roomHeight / 2, -roomDepth / 2, 0, 0);
+  vertex(roomWidth / 2, roomHeight / 2, -roomDepth / 2, 1, 0);
+  vertex(roomWidth / 2, roomHeight / 2, roomDepth / 2, 1, 1);
+  vertex(-roomWidth / 2, roomHeight / 2, roomDepth / 2, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Ceiling
+  // Ceiling 
   pushMatrix();
-  translate(0, -roomHeight / 2, 0);
   beginShape();
   texture(ceilingTexture);
-  vertex(-roomWidth / 2, 0, -roomDepth / 2, 0, 0);
-  vertex(roomWidth / 2, 0, -roomDepth / 2, 1, 0);
-  vertex(roomWidth / 2, 0, roomDepth / 2, 1, 1);
-  vertex(-roomWidth / 2, 0, roomDepth / 2, 0, 1);
+  vertex(-roomWidth / 2, -roomHeight / 2, -roomDepth / 2, 0, 0);  // top-left
+  vertex(-roomWidth / 2, -roomHeight / 2, roomDepth / 2, 0, 1);   // bottom-left
+  vertex(roomWidth / 2, -roomHeight / 2, roomDepth / 2, 1, 1);    // bottom-right
+  vertex(roomWidth / 2, -roomHeight / 2, -roomDepth / 2, 1, 0);   // top-right
   endShape(CLOSE);
   popMatrix();
 
-  // Back Wall
+
+  // Back Wall 
   pushMatrix();
-  translate(0, 0, roomDepth / 2);
   beginShape();
   texture(wallTexture);
-  vertex(-roomWidth / 2, -roomHeight / 2, 0, 0, 0);
-  vertex(roomWidth / 2, -roomHeight / 2, 0, 1, 0);
-  vertex(roomWidth / 2, roomHeight / 2, 0, 1, 1);
-  vertex(-roomWidth / 2, roomHeight / 2, 0, 0, 1);
+  vertex(-roomWidth / 2, -roomHeight / 2, roomDepth / 2, 0, 1);
+  vertex(-roomWidth / 2, roomHeight / 2, roomDepth / 2, 0, 0);
+  vertex(roomWidth / 2, roomHeight / 2, roomDepth / 2, 1, 0);
+  vertex(roomWidth / 2, -roomHeight / 2, roomDepth / 2, 1, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Left Wall
+  // Left Wall 
   pushMatrix();
-  translate(-roomWidth / 2, 0, 0);
   beginShape();
   texture(wallTexture);
-  vertex(0, -roomHeight / 2, -roomDepth / 2, 0, 0);
-  vertex(0, roomHeight / 2, -roomDepth / 2, 1, 0);
-  vertex(0, roomHeight / 2, roomDepth / 2, 1, 1);
-  vertex(0, -roomHeight / 2, roomDepth / 2, 0, 1);
+  vertex(-roomWidth / 2, -roomHeight / 2, -roomDepth / 2, 0, 0);
+  vertex(-roomWidth / 2, roomHeight / 2, -roomDepth / 2, 1, 0);
+  vertex(-roomWidth / 2, roomHeight / 2, roomDepth / 2, 1, 1);
+  vertex(-roomWidth / 2, -roomHeight / 2, roomDepth / 2, 0, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Right Wall
+  // Right Wall 
   pushMatrix();
-  translate(roomWidth / 2, 0, 0);
   beginShape();
   texture(wallTexture);
-  vertex(0, -roomHeight / 2, -roomDepth / 2, 0, 0);
-  vertex(0, roomHeight / 2, -roomDepth / 2, 1, 0);
-  vertex(0, roomHeight / 2, roomDepth / 2, 1, 1);
-  vertex(0, -roomHeight / 2, roomDepth / 2, 0, 1);
+  vertex(roomWidth / 2, -roomHeight / 2, roomDepth / 2, 0, 1);
+  vertex(roomWidth / 2, roomHeight / 2, roomDepth / 2, 0, 0);
+  vertex(roomWidth / 2, roomHeight / 2, -roomDepth / 2, 1, 0);
+  vertex(roomWidth / 2, -roomHeight / 2, -roomDepth / 2, 1, 1);
   endShape(CLOSE);
   popMatrix();
 
-  // Front Wall
+  // Front Wall 
   pushMatrix();
   translate(0, 0, -roomDepth / 2);
   beginShape();
@@ -162,6 +149,7 @@ void drawRoom(PImage wallTexture, PImage floorTexture, PImage ceilingTexture) {
   endShape(CLOSE);
   popMatrix();
 }
+
 
 
 void drawFull3DGrid() {
@@ -237,3 +225,48 @@ void drawAxes() {
   stroke(0, 0, 255);
   line(0, 0, 0, 0, 0, gridCount * gridSize);
 }
+void drawLightBulb(float x, float y, float z, float w, float h, float d, PImage texture) {
+    pushMatrix();
+    translate(x, y, z);
+    textureMode(NORMAL);
+    beginShape(QUADS);
+    texture(texture);
+    // Top face
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, -h / 2, -d / 2, 1, 0);
+    vertex(w / 2, -h / 2, d / 2, 1, 1);
+    vertex(-w / 2, -h / 2, d / 2, 0, 1);
+  
+    // Bottom face
+    vertex(-w / 2, h / 2, -d / 2, 0, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, h / 2, d / 2, 0, 1);
+  
+    // Front face
+    vertex(-w / 2, -h / 2, d / 2, 0, 0);
+    vertex(w / 2, -h / 2, d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, h / 2, d / 2, 0, 1);
+  
+    // Back face
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, -h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 1);
+    vertex(-w / 2, h / 2, -d / 2, 0, 1);
+  
+    // Left face
+    vertex(-w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(-w / 2, h / 2, -d / 2, 1, 0);
+    vertex(-w / 2, h / 2, d / 2, 1, 1);
+    vertex(-w / 2, -h / 2, d / 2, 0, 1);
+  
+    // Right face
+    vertex(w / 2, -h / 2, -d / 2, 0, 0);
+    vertex(w / 2, h / 2, -d / 2, 1, 0);
+    vertex(w / 2, h / 2, d / 2, 1, 1);
+    vertex(w / 2, -h / 2, d / 2, 0, 1);
+  
+    endShape(CLOSE);
+    popMatrix();
+  }

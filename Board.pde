@@ -13,22 +13,20 @@ class Board {
   void display() {
     pushMatrix();
     translate(position.x, position.y, position.z);
-
-
-    // Draw white board surface
-    fill(boardColor);
-    textureMode(NORMAL); // Set texture mode to NORMAL
-    beginShape(QUADS);
-        texture(boardTexture);
-        drawBox(0, 0, 0, boardWidth, boardHeight, boardDepth - 1);
-    endShape(CLOSE);
+    // Draw board surface
+    drawBox(0, 0, 0, boardWidth, boardHeight, boardDepth - 1,boardTexture);
     popMatrix();
   }
 
-  void drawBox(float x, float y, float z, float w, float h, float d) {
+  void drawBox(float x, float y, float z, float w, float h, float d, PImage texture) {
+    pushMatrix();
     noStroke();
-    translate(x, y, z);
 
+    translate(x, y, z);
+    textureMode(NORMAL);
+    beginShape(QUADS);
+    texture(texture);
+  
     // Top face
     vertex(-w / 2, -h / 2, -d / 2, 0, 0);
     vertex(w / 2, -h / 2, -d / 2, 1, 0);
@@ -64,5 +62,9 @@ class Board {
     vertex(w / 2, h / 2, -d / 2, 1, 0);
     vertex(w / 2, h / 2, d / 2, 1, 1);
     vertex(w / 2, -h / 2, d / 2, 0, 1);
+  
+    endShape(CLOSE);
+    popMatrix();
   }
+
 }

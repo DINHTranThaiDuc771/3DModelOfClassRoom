@@ -19,18 +19,15 @@ class Chair {
     translate(position.x, position.y, position.z);
     noStroke();
     // Draw the seat
-    fill(150, 100, 50);  // Brown color for the seat
     drawBox(0, seatHeight / 2, 0, seatWidth, seatHeight, seatDepth,chairTexture);
     
     // Draw the four legs
-    fill(100, 50, 20);  // Dark brown color for the legs
     drawBox(-(seatWidth / 2 - legThickness / 2), legHeight / 2+legThickness, -(seatDepth / 2 - legThickness / 2), legThickness, legHeight, legThickness,chairTexture); // Front left leg
     drawBox((seatWidth / 2 - legThickness / 2), legHeight / 2+legThickness, -(seatDepth / 2 - legThickness / 2), legThickness, legHeight, legThickness,chairTexture); // Front right leg
     drawBox(-(seatWidth / 2 - legThickness / 2), legHeight / 2+legThickness, (seatDepth / 2 - legThickness / 2), legThickness, legHeight, legThickness,chairTexture); // Back left leg
     drawBox((seatWidth / 2 - legThickness / 2), legHeight / 2+legThickness, (seatDepth / 2 - legThickness / 2), legThickness, legHeight, legThickness,chairTexture); // Back right leg
     
     // Draw the backrest
-    fill(150, 100, 50);  // Same color for the backrest as the seat
     drawBox(0,  - backrestHeight / 2, seatDepth / 2 - backrestThickness / 2, seatWidth, backrestHeight, backrestThickness,chairTexture);
 
     popMatrix();

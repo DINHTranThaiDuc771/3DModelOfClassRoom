@@ -24,10 +24,8 @@ class LargeMonitor {
 
     // Draw screen
     drawBox(0, -standHeight - screenHeight / 2, 0, screenWidth, screenHeight, screenDepth,black);
-
     // Draw stand pole
     drawBox(0, -standHeight / 2, 0, standWidth, standHeight, standWidth,darkGray);
-
     // Draw stand base
     drawBox(0, baseThickness / 2, 0, baseWidth, baseThickness, baseDepth,lightGray);
 
