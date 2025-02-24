@@ -11,7 +11,7 @@ int roomHeight = 400;
 int roomDepth = 1200;
 PShader shader;
 ArrayList<WorkSpace> workspaces = new ArrayList<WorkSpace>();
-PImage wallTexture,floorTexture,cellingTexture,bulbTexture ;
+PImage wallTexture,floorTexture,cellingTexture,bulbTexture,slimeTexture ;
 PVector[] lightPos = { 
   new PVector(0, -roomHeight/2+5, -roomDepth/2+25),
   new PVector(0, -roomHeight/2+5, 0),
@@ -25,7 +25,11 @@ PVector[] lightColor = {
   new PVector(100, 100, 100),
   new PVector(100, 100, 100)
 };
-
+//Attribut slime
+float slimeMoveSpeed = 2;
+float xMin = -roomWidth/2 +50;
+float xMax = roomWidth/2 - 50;
+float xPos = 0;
 void setup() {
   size(800, 600, P3D);
   shader = loadShader("LightShaderTexFrag.glsl", "LightShaderTexVert.glsl");
@@ -34,6 +38,7 @@ void setup() {
   floorTexture = loadImage("floorTexture.png");
   cellingTexture = loadImage("cellingTexture.jpg");
   bulbTexture = loadImage("white.png");
+  slimeTexture = loadImage("slime.jpg");
   //Load objects instances
   cam = new Camera(0,0,0);
   float yWorkSpace = roomHeight/2-35; //35 is tableHeight/2
@@ -59,7 +64,7 @@ void draw() {
   cam.update();  // Update the camera
   for(int i=0; i<lightPos.length; i++) {
     pointLight(lightColor[i].x, lightColor[i].y, lightColor[i].z,lightPos[i].x, lightPos[i].y, lightPos[i].z);
-    drawLightBulb(lightPos[i].x, lightPos[i].y, lightPos[i].z,10,10,50,bulbTexture);
+    drawBox(lightPos[i].x, lightPos[i].y, lightPos[i].z,10,10,50,bulbTexture);
            
   }
 
@@ -73,6 +78,12 @@ void draw() {
   popMatrix();
   board.display();
   drawRoom(wallTexture,floorTexture,cellingTexture);
+  //Animation Slime
+  xPos += slimeMoveSpeed;
+  if (xPos > xMax || xPos < xMin) {
+    slimeMoveSpeed *= -1; // Reverse direction
+  }
+  drawBox(xPos,roomHeight/2-75,-300,50,150,50,slimeTexture);
 }
 void mousePressed(){
   show3DGrid = !show3DGrid;
@@ -225,7 +236,7 @@ void drawAxes() {
   stroke(0, 0, 255);
   line(0, 0, 0, 0, 0, gridCount * gridSize);
 }
-void drawLightBulb(float x, float y, float z, float w, float h, float d, PImage texture) {
+void drawBox(float x, float y, float z, float w, float h, float d, PImage texture) {
     pushMatrix();
     translate(x, y, z);
     textureMode(NORMAL);

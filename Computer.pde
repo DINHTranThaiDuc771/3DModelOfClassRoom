@@ -39,8 +39,7 @@ class Computer {
     translate(x, y, z);
     beginShape(QUADS);
       texture(textureTop);
-      // Top face (where the texture will be applied)
-      vertex(-w / 2, -h / 2, -d / 2, 0, 0);  // Vertex coordinates with texture mapping (x, y, z, u, v)
+      vertex(-w / 2, -h / 2, -d / 2, 0, 0);  
       vertex(w / 2, -h / 2, -d / 2, 1, 0);
       vertex(w / 2, -h / 2, d / 2, 1, 1);
       vertex(-w / 2, -h / 2, d / 2, 0, 1);

@@ -13,7 +13,7 @@ class Chair {
     position = new PVector(x, y, z);
   }
 
-  // Method to display the chair
+  
   void display() {
     pushMatrix();
     translate(position.x, position.y, position.z);

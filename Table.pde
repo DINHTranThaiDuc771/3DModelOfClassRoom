@@ -48,7 +48,7 @@ class Table {
     popMatrix();
   }
 
-  // Method to draw the table top with texture applied
+  //draw the table top 
   void drawTableTop(float x, float y, float z, float w, float h, float d) {
     drawBoxWithTextureOnTop(x,y,z,w,h,d,textureTable,lightBrown);
 
